@@ -89,6 +89,7 @@ export default class PieChart extends Component {
     let textStyle = fontAdapt(options.label)
 
     let slices
+    let labels
 
     if (this.props.data.length === 1) {
       let item = this.props.data[0]
@@ -121,19 +122,21 @@ export default class PieChart extends Component {
       slices = chart.curves.map( (c, i) => {
         let fill = (c.item.color && Colors.string(c.item.color)) || this.color(i)
         let stroke = typeof fill === 'string' ? fill : Colors.darkenColor(fill)
+        labels.append(
+          <G x={options.margin.left} y={options.margin.top}>
+            <Text fontFamily={textStyle.fontFamily}
+                  fontSize={textStyle.fontSize}
+                  fontWeight={textStyle.fontWeight}
+                  fontStyle={textStyle.fontStyle}
+                  fill={textStyle.fill}
+                  textAnchor="middle"
+                  x={c.sector.centroid[0]}
+                  y={c.sector.centroid[1]}>{ c.item.name }</Text>
+          </G>
+        )
         return (
                   <G key={ i }>
                       <Path d={c.sector.path.print() } stroke={stroke} fill={fill} fillOpacity={1}  />
-                      <G x={options.margin.left} y={options.margin.top}>
-                        <Text fontFamily={textStyle.fontFamily}
-                              fontSize={textStyle.fontSize}
-                              fontWeight={textStyle.fontWeight}
-                              fontStyle={textStyle.fontStyle}
-                              fill={textStyle.fill}
-                              textAnchor="middle"
-                              x={c.sector.centroid[0]}
-                              y={c.sector.centroid[1]}>{ c.item.name }</Text>
-                      </G>
                   </G>
               )
       })
@@ -142,6 +145,7 @@ export default class PieChart extends Component {
     let returnValue = <Svg width={options.width} height={options.height}>
             <G x={options.margin.left} y={options.margin.top}>
                 { slices }
+                { labels }
             </G>
           </Svg>
 
